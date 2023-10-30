@@ -10,6 +10,68 @@
         integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <title>Expense Tracker</title>
+
+    <style>
+        .flex {
+            -webkit-box-flex: 1;
+            -ms-flex: 1 1 auto;
+            flex: 1 1 auto
+        }
+
+        @media (max-width:991.98px) {
+            .padding {
+                padding: 1.5rem
+            }
+        }
+
+        @media (max-width:767.98px) {
+            .padding {
+                padding: 1rem
+            }
+        }
+
+        .padding {
+            padding: 5rem
+        }
+
+        .card {
+            background: #fff;
+            border-width: 0;
+            border-radius: .25rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, .05);
+            margin-bottom: 1.5rem
+        }
+
+        .card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid rgba(19, 24, 44, .125);
+            border-radius: .25rem
+        }
+
+        .card-header {
+            padding: .75rem 1.25rem;
+            margin-bottom: 0;
+            background-color: rgba(19, 24, 44, .03);
+            border-bottom: 1px solid rgba(19, 24, 44, .125)
+        }
+
+        .card-header:first-child {
+            border-radius: calc(.25rem - 1px) calc(.25rem - 1px) 0 0
+        }
+
+        card-footer,
+        .card-header {
+            background-color: transparent;
+            border-color: rgba(160, 175, 185, .15);
+            background-clip: padding-box
+        }
+    </style>
 </head>
 
 <body>
@@ -27,7 +89,8 @@
                     <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Add Expense</a>
+                    <a class="nav-link" type="button" class="btn btn-primary" data-toggle="modal"
+                        data-target="#exampleModal">Add Expense</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
@@ -52,60 +115,96 @@
 
     <!-- Report -->
     <div class="container card mb-4 bg-light" style="border-radius: 5px; border-style: solid black; border-width : thick;
-    padding-top: 10px;">
-    <center>
-        <h3>Monthly Report of {{reportData['current_month_name']}}</h3>
+    padding-top: 20px;">
+        <div class="row">
+            <div class="col">
+                <center>
+                    <h3>Monthly Report of {{reportData['current_month_name']}}</h3>
+                </center>
+            </div>
+        </div>
         <hr>
-        <h4>Date : {{reportData['date']}} </h4>
-        <h4>Expense : {{reportData['expense']}}</h4>
-        <h4>Remaining Amount : {{reportData['remaining_amount']}}</h4>
-        <hr>
-        <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
-            Add new Expense
-        </button>
-        <hr>
-    </center>
+        <div class="row">
+            <div class="col" style="padding-top: 70px; border-style: 10px solid black;">
+                <center>
+                    <h5>Date : {{reportData['date']}} </h5>
+                    <h5>Expense : {{reportData['expense']}}</h5>
+                    <h5>Remaining Amount : {{reportData['remaining_amount']}}</h5>
+                    <h5>Days Left : {{reportData['days_left']}}</h5>
+                </center>
+            </div>
+            <div class="col">
+                <div class="card-body" style="height: 100%">
+                    <div class="chartjs-size-monitor"
+                        style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                        <div class="chartjs-size-monitor-expand"
+                            style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0">
+                            </div>
+                        </div>
+                        <div class="chartjs-size-monitor-shrink"
+                            style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                            <div style="position:absolute;width:100%;height:100%;left:0; top:0"></div>
+                        </div>
+                    </div> <canvas id="chart-line" width="200" height="100" class="chartjs-render-monitor"
+                        style="display: block; width: 200px; height: 100px;"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="padding-top: 0px;">
+            <div class="col">
+                <hr>
+                <center>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">
+                        Add new Expense
+                    </button>
+                </center>
+                <hr>
+            </div>
+        </div>
+
     </div>
 
 
     <!-- Form -->
-  
-  <!-- Modal -->
-  <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" action="/add">
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="text" name="amount" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="category">Category</label>
+                            <input type="text" name="category" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="date">Date</label>
+                            <input type="date" name="date" class="form-control" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary" value="Add Expense">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
-        <div class="modal-body">
-            <form method="POST" action="/add">
-                <div class="form-group">
-                    <label for="amount">Amount</label>
-                    <input type="text" name="amount" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="category">Category</label>
-                    <input type="text" name="category" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="date">Date</label>
-                    <input type="date" name="date" class="form-control" required>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                    <button type="submit" class="btn btn-primary" value="Add Expense">Add</button>
-                </div>
-            </form>
-        </div>
-      </div>
     </div>
-  </div>
 
     <center>
-        <h4>Recent Expenses</h4>
+        <h5>Recent Expenses</h5>
     </center>
 
     <!-- Table  -->
@@ -138,6 +237,33 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.4.1/dist/js/bootstrap.min.js"
         integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
         crossorigin="anonymous"></script>
+
+
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.bundle.min.js'></script>
+    <script>
+        $(document).ready(function () {
+            var ctx = $("#chart-line");
+            var exp = {{reportData['expense']}};
+            var rem = {{reportData['remaining_amount']}};
+            var myLineChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ["Expense", "Remaining"],
+                    datasets: [{
+                        data: [exp, rem],
+                        backgroundColor: ["rgba(255, 0, 0, 0.5)", "rgba(100, 255, 0, 0.5)"]
+                    }]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        text: 'Monthly Expense'
+                    }
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>

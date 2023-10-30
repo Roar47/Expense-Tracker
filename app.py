@@ -1,6 +1,7 @@
 from flask import Flask,render_template,request,redirect,url_for
 from datetime import date,datetime
 from db_connector import getDbConnection
+import calendar
 
 app = Flask(__name__)
 
@@ -20,6 +21,7 @@ def home():
     expense = getExpenseForParticularMonth(reportData['current_month'],reportData['current_year'])
     reportData['expense'] = expense
     reportData['remaining_amount'] = Limit - expense
+    reportData['days_left'] = getNumOfDaysLeft()
     return render_template('index.html',data=data,reportData=reportData)
 
 @app.route('/add', methods=['POST'])
@@ -57,3 +59,9 @@ def getMonthName(month):
     month_names = ["January","February","March","April","May","June","July",
             "August","September","October","November","December"]
     return month_names[month - 1]
+
+def getNumOfDaysLeft():
+    current_date = datetime.now()
+    last_day_of_month = calendar.monthrange(current_date.year, current_date.month)
+    days_left = last_day_of_month[1] - current_date.day
+    return days_left
