@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request,redirect,url_for
+from flask import Flask,render_template,request,redirect,url_for,jsonify
 from datetime import date,datetime
 from db_connector import getDbConnection
 import calendar
@@ -40,6 +40,23 @@ def add_expense():
         cur.close()
 
     return redirect(url_for('home'))
+
+
+@app.route('/execute_sql', methods=['GET', 'POST'])
+def execute_sql():
+    if request.method == 'POST':
+        sql_query = request.form['sql_query']
+        cursor = mysql.connection.cursor()
+        cursor.execute(sql_query)
+        result = cursor.fetchall()
+        columns = [desc[0] for desc in cursor.description]
+        cursor.close()
+        result_json = [dict(zip(columns, row)) for row in result]
+        print(result_json)
+        return jsonify(result_json)
+    return render_template('customquery.html')
+
+
 
 def dataFetcher(query):
     cur = mysql.connection.cursor()
