@@ -102,7 +102,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <a class="dropdown-item" href="#">CSV Format</a>
-                        <a class="dropdown-item" href="#">PDF Format</a>
+                        <a class="dropdown-item" onclick="printPage()">PDF Format</a>
                     </div>
                 </li>
                 <li class="nav-item">
@@ -270,6 +270,12 @@
                 }
             });
         });
+    </script>
+    <script>
+        function printPage()
+        {
+            window.print()
+        }
     </script>
 
 </body>
