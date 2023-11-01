@@ -9,7 +9,7 @@ mysql = getDbConnection(app)
 
 @app.route('/')
 def home():
-    query = 'SELECT * FROM expense_table;'
+    query = 'SELECT * FROM expense_table ORDER BY id DESC LIMIT 5;'
     data = dataFetcher(query)
     reportData = {}
     Limit = 30000
@@ -18,10 +18,17 @@ def home():
     reportData['current_month'] = datetime.now().month
     reportData['current_month_name'] = getMonthName(reportData['current_month'])
     reportData['current_year'] = datetime.now().year
-    expense = getExpenseForParticularMonth(reportData['current_month'],reportData['current_year'])
-    reportData['expense'] = expense
-    reportData['remaining_amount'] = Limit - expense
+    reportData['Rent'] = getExpenseForCategogry("Rent",reportData['current_month'],reportData['current_year'])
+    reportData['Food'] = getExpenseForCategogry("DirectiFood",reportData['current_month'],reportData['current_year']) + getExpenseForCategogry("OutsideFood",reportData['current_month'],reportData['current_year'])
+    reportData['Others'] = getExpenseForCategogry("Others",reportData['current_month'],reportData['current_year'])
+    reportData['Home'] = getExpenseForCategogry("Home",reportData['current_month'],reportData['current_year'])
+    reportData['Travel'] = getExpenseForCategogry("Travel",reportData['current_month'],reportData['current_year'])
+    reportData['Bills'] = getExpenseForCategogry("Bills",reportData['current_month'],reportData['current_year'])
+    reportData['expense'] = reportData['Rent'] + reportData['Food'] + reportData['Others'] + reportData['Travel'] + reportData['Bills']
+    reportData['remaining_amount'] = Limit - reportData['expense']
     reportData['days_left'] = getNumOfDaysLeft()
+    reportData['Total'] = getTotalExpenseForParticularMonth(reportData['current_month'],reportData['current_year'])
+    app.logger.info(reportData)
     return render_template('index.html',data=data,reportData=reportData)
 
 @app.route('/add', methods=['POST'])
@@ -34,7 +41,6 @@ def add_expense():
         cur = mysql.connection.cursor()
         query = 'INSERT INTO expense_table (amount, category, date) VALUES ({},"{}","{}");'
         query = query.format(amount,category,date)
-        print("query = " + query)
         cur.execute(query)
         mysql.connection.commit()
         cur.close()
@@ -59,17 +65,21 @@ def execute_sql():
 
 
 def dataFetcher(query):
+    app.logger.info(query)
     cur = mysql.connection.cursor()
     cur.execute(query)
     data = cur.fetchall()
+    app.logger.info(data)
     cur.close()
     return data
 
-def getExpenseForParticularMonth(month,year):
+def getTotalExpenseForParticularMonth(month,year):
     query = 'SELECT SUM(amount) AS total_expenses FROM expense_table WHERE YEAR(date) = {} AND MONTH(date) = {};'
     query = query.format(year,month)
 
     data = dataFetcher(query)
+    if data[0][0] is None:
+        return 0
     return data[0][0]
 
 def getMonthName(month):
@@ -82,3 +92,12 @@ def getNumOfDaysLeft():
     last_day_of_month = calendar.monthrange(current_date.year, current_date.month)
     days_left = last_day_of_month[1] - current_date.day
     return days_left
+
+def getExpenseForCategogry(category,month,year):
+    query = 'SELECT SUM(amount) FROM expense_table where category = "{}" and MONTH(date) = {} and YEAR(date) = {};'
+    query = query.format(category,month,year)
+    print(query)
+    data = dataFetcher(query)
+    if data[0][0] is None:
+        return 0
+    return data[0][0]
