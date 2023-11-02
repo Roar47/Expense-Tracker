@@ -96,7 +96,6 @@ def getNumOfDaysLeft():
 def getExpenseForCategogry(category,month,year):
     query = 'SELECT SUM(amount) FROM expense_table where category = "{}" and MONTH(date) = {} and YEAR(date) = {};'
     query = query.format(category,month,year)
-    print(query)
     data = dataFetcher(query)
     if data[0][0] is None:
         return 0
