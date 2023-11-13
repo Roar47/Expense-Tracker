@@ -69,11 +69,21 @@
                     <form method="POST" action="/add">
                         <div class="form-group">
                             <label for="amount">Amount</label>
-                            <input type="text" name="amount" class="form-control" required>
+                            <input type="number" name="amount" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label for="category">Category</label>
-                            <input type="text" name="category" class="form-control" required>
+                            <!-- <input type="text" name="category" class="form-control" required> -->
+                            <select class="form-control" name="category" id="categoryID" required>
+                                <option>Rent</option>
+                                <option>DirectiFood</option>
+                                <option>OutsideFood</option>
+                                <option>Travel</option>
+                                <option>Home</option>
+                                <option>Invested</option>
+                                <option>Bills</option>
+                                <option>Other</option>
+                            </select>
                         </div>
                         <div class="form-group">
                             <label for="date">Date</label>

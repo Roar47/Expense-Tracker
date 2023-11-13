@@ -20,7 +20,7 @@ def home():
     reportData['current_year'] = datetime.now().year
     reportData['Rent'] = getExpenseForCategogry("Rent",reportData['current_month'],reportData['current_year'])
     reportData['Food'] = getExpenseForCategogry("DirectiFood",reportData['current_month'],reportData['current_year']) + getExpenseForCategogry("OutsideFood",reportData['current_month'],reportData['current_year'])
-    reportData['Others'] = getExpenseForCategogry("Others",reportData['current_month'],reportData['current_year'])
+    reportData['Others'] = getExpenseForCategogry("Other",reportData['current_month'],reportData['current_year'])
     reportData['Home'] = getExpenseForCategogry("Home",reportData['current_month'],reportData['current_year'])
     reportData['Travel'] = getExpenseForCategogry("Travel",reportData['current_month'],reportData['current_year'])
     reportData['Bills'] = getExpenseForCategogry("Bills",reportData['current_month'],reportData['current_year'])
